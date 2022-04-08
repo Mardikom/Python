@@ -1,16 +1,17 @@
 import tkinter as t
-from tkinter import ttk
 from random import randint
 
 win = t.Tk() 
 
 win.configure(background="white")
-win.title("ОКНО")
+win.title("MineSweeper")
 
 def graphic_field():
+    global label
     for x in range(10):
         for y in range(10):
             label = t.Label(width=6, height=3, bg="green", relief= "ridge")
+            label.bind("<Button-1>", click)
             label.grid(row=x, column=y)
 
 def digit_field():  
@@ -35,11 +36,38 @@ def start_game():
     print_digit_field()
     graphic_field()
 
-
+def click(event):
+    clicked_label = event.widget
+    info_grid = clicked_label.grid_info()
+    row = info_grid["row"]
+    column = info_grid["column"]
+    print(row, column)
+    clicked_label.config(background="red")
+    print(big_spisok[row][column])
+    if big_spisok[row][column] == 1:
+        clicked_label.config(bg="red", text="*")
+    else:
+        mines_around = 0
+        clicked_label.config(bg="blue")
+        if big_spisok[row-1][column] == 1:
+            mines_around +=1
+        if big_spisok[row-1][column+1] == 1:
+            mines_around +=1
+        if big_spisok[row][column+1] == 1:
+            mines_around +=1
+        if big_spisok[row+1][column+1] == 1:
+            mines_around +=1
+        if big_spisok[row+1][column] == 1:
+            mines_around +=1
+        if big_spisok[row+1][column-1] == 1:
+            mines_around +=1
+        if big_spisok[row][column-1] == 1:
+            mines_around +=1
+        if big_spisok[row-1][column-1] == 1:
+            mines_around +=1
+        clicked_label.configure(text=mines_around)
 
 start_game()
 
 
 win.mainloop()
-
-#ДЗ: по нажатию на любую ячейку она меняет цвет на синий
