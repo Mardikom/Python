@@ -1,5 +1,6 @@
 import tkinter as t
 from random import randint
+from tkinter import messagebox
 
 win = t.Tk() 
 
@@ -10,7 +11,7 @@ def graphic_field():
     global label
     for x in range(10):
         for y in range(10):
-            label = t.Label(width=6, height=3, bg="green", relief= "ridge")
+            label = t.Label(width=6, height=3, bg="grey", relief= "ridge")
             label.bind("<Button-1>", click)
             label.grid(row=x, column=y)
 
@@ -45,29 +46,43 @@ def click(event):
     clicked_label.config(background="red")
     print(big_spisok[row][column])
     if big_spisok[row][column] == 1:
-        clicked_label.config(bg="red", text="*")
+        msbox = messagebox.askyesno("You lose", "YOU LOST!!!\nTry again?")
+        clicked_label.config(bg="red", text="*")# п
     else:
         mines_around = 0
-        clicked_label.config(bg="blue")
-        if big_spisok[row-1][column] == 1:
-            mines_around +=1
-        if big_spisok[row-1][column+1] == 1:
-            mines_around +=1
-        if big_spisok[row][column+1] == 1:
-            mines_around +=1
-        if big_spisok[row+1][column+1] == 1:
-            mines_around +=1
-        if big_spisok[row+1][column] == 1:
-            mines_around +=1
-        if big_spisok[row+1][column-1] == 1:
-            mines_around +=1
-        if big_spisok[row][column-1] == 1:
-            mines_around +=1
-        if big_spisok[row-1][column-1] == 1:
-            mines_around +=1
+        clicked_label.config(bg="white")
+        
+        if row != 0:
+            if big_spisok[row-1][column] == 1:
+                mines_around +=1
+        if column != 9 and row != 0:
+            if big_spisok[row-1][column+1] == 1:
+                mines_around +=1
+        if column != 9:
+            if big_spisok[row][column+1] == 1:
+                mines_around +=1
+        if column != 9 and row != 9:
+            if big_spisok[row+1][column+1] == 1:
+                mines_around +=1
+        if row != 9:
+            if big_spisok[row+1][column] == 1:
+                mines_around +=1
+        if row != 9 and column != 0:
+            if big_spisok[row+1][column-1] == 1:
+                mines_around +=1
+        if column != 0:
+            if big_spisok[row][column-1] == 1:
+                mines_around +=1
+        if column != 0 and row != 0:
+            if big_spisok[row-1][column-1] == 1:
+                mines_around +=1
+            
         clicked_label.configure(text=mines_around)
 
 start_game()
 
 
 win.mainloop()
+
+
+# ДЗ: условие для выигрыша.
