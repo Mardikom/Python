@@ -1,3 +1,4 @@
+from operator import contains
 import tkinter as t
 from random import randint
 from tkinter import messagebox
@@ -6,6 +7,7 @@ win = t.Tk()
 
 win.configure(background="white")
 win.title("MineSweeper")
+win.resizable(False, False)
 
 def graphic_field():
     global label
@@ -30,14 +32,27 @@ def digit_field():
 def print_digit_field():
     for y in big_spisok:
         print(y)
+    
+def won():
+    if clicks == 75:
+        if messagebox.askyesno("You win", "YOU WIN!!!\nTry again?"):
+            win.destroy()
+            start_game()
+
 
 
 def start_game():
     digit_field()
     print_digit_field()
     graphic_field()
+    
+clicks = 0
 
 def click(event):
+    global clicks
+    clicks += 1
+    print(clicks)
+    won()
     clicked_label = event.widget
     info_grid = clicked_label.grid_info()
     row = info_grid["row"]
@@ -46,7 +61,11 @@ def click(event):
     clicked_label.config(background="red")
     print(big_spisok[row][column])
     if big_spisok[row][column] == 1:
-        msbox = messagebox.askyesno("You lose", "YOU LOST!!!\nTry again?")
+        if messagebox.askyesno("You win", "YOU LOST!!!\nTry again?"):
+            win.destroy()
+            graphic_field()
+            digit_field()
+            print_digit_field()
         clicked_label.config(bg="red", text="*")# п
     else:
         mines_around = 0
