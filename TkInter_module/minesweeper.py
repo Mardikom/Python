@@ -35,9 +35,12 @@ def print_digit_field():
     
 def won():
     if clicks == 75:
+        
         if messagebox.askyesno("You win", "YOU WIN!!!\nTry again?"):
             win.destroy()
             start_game()
+        else:
+            win.destroy()
 
 
 
@@ -63,9 +66,9 @@ def click(event):
     if big_spisok[row][column] == 1:
         if messagebox.askyesno("You win", "YOU LOST!!!\nTry again?"):
             win.destroy()
-            graphic_field()
-            digit_field()
-            print_digit_field()
+            start_game()
+        else:
+            win.destroy()
         clicked_label.config(bg="red", text="*")# п
     else:
         mines_around = 0
