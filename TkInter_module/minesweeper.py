@@ -1,4 +1,3 @@
-from operator import contains
 import tkinter as t
 from random import randint
 from tkinter import messagebox
@@ -16,7 +15,6 @@ def graphic_field():
             label = t.Label(width=6, height=3, bg="grey", relief= "ridge")
             label.bind("<Button-1>", click)
             label.grid(row=x, column=y)
-
 bombs = 0
 
 def digit_field():  
@@ -35,9 +33,14 @@ def digit_field():
                 big_spisok[x][y] = 1
 
 def print_digit_field():
-    for y in big_spisok:
-        print(y)
-    
+    for x in range(1,11):
+        for y in range(1,11):
+            if y == 10:
+                print(big_spisok[x][y], end="\n")
+            else:
+                print(big_spisok[x][y], end=" ")
+
+
 def won():
     if clicks == 100-bombs:
         if messagebox.askyesno("You win", "YOU WIN!!!\nTry again?"):
@@ -45,12 +48,12 @@ def won():
         else:
             win.destroy()
 
-def label_destroy():
+def labels_destroy():
     for x in win.winfo_children():
         x.destroy()
 
 def start_game():
-    label_destroy
+    labels_destroy
     digit_field()
     print_digit_field()
     graphic_field()
@@ -65,6 +68,7 @@ def click(event):
         info_grid = clicked_label.grid_info()
         row = info_grid["row"] + 1
         column = info_grid["column"] + 1
+        # first_click(row = row,column = column)
         if big_spisok[row][column] == 1:
             clicked_label.config(bg="red", text="*")
             if messagebox.askyesno("You win", "YOU LOST!!!\nTry again?"):
@@ -76,34 +80,19 @@ def click(event):
             clicks += 1
             won()
             clicked_label.config(bg="white")
-            
-
-'''            if row != 0:
-                if big_spisok[row-1][column] == 1:
-                    mines_around +=1
-            if column != 9 and row != 0:
-                if big_spisok[row-1][column+1] == 1:
-                    mines_around +=1
-            if column != 9:
-                if big_spisok[row][column+1] == 1:
-                    mines_around +=1
-            if column != 9 and row != 9:
-                if big_spisok[row+1][column+1] == 1:
-                    mines_around +=1
-            if row != 9:
-                if big_spisok[row+1][column] == 1:
-                    mines_around +=1
-            if row != 9 and column != 0:
-                if big_spisok[row+1][column-1] == 1:
-                    mines_around +=1
-            if column != 0:
-                if big_spisok[row][column-1] == 1:
-                    mines_around +=1
-            if column != 0 and row != 0:
-                if big_spisok[row-1][column-1] == 1:
-                    mines_around +=1'''
-                
+            for row_shift in [-1, 0, 1]:
+                for col_shift in [-1, 0, 1]:
+                    if big_spisok[row + row_shift][column + col_shift] == 1:
+                        mines_around += 1
             clicked_label.configure(text=mines_around)
+            
+def first_click(row, column):
+    big_spisok[row][column] = 0
+    for row_shift in [-1, 0, 1]:
+        for col_shift in [-1, 0, 1]:
+            big_spisok[row + row_shift][column + col_shift] = 0
+                
+       
 
 start_game()
 
