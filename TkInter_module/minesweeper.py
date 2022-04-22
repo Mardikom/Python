@@ -4,7 +4,19 @@ from tkinter import messagebox
 
 win = t.Tk() 
 
+menu = t.Menu()
+
+menubar = t.Menu(menu)
+
+menu.add_cascade(label="Options", menu = menubar)
+
+menubar.add_command(label="Change LVL", command = None)
+menubar.add_command(label="start again", command = None)
+menubar.add_command(label="Exit", command = None)
+
+win.configure(menu = menu)
 win.configure(background="white")
+
 win.title("MineSweeper")
 win.resizable(False, False)
 
@@ -14,7 +26,18 @@ def graphic_field():
         for y in range(10):
             label = t.Label(width=6, height=3, bg="grey", relief= "ridge")
             label.bind("<Button-1>", click)
+            label.bind("<Button-2>", add_flag)
             label.grid(row=x, column=y)
+
+    
+def add_flag(event):
+    clicked_label = event.widget
+    if clicked_label["bg"] == "yellow":
+        clicked_label.config(bg="grey")
+    elif clicked_label["bg"] == "grey":
+        clicked_label.config(bg="yellow")
+
+
 bombs = 0
 
 def digit_field():  
@@ -41,13 +64,16 @@ def print_digit_field():
                 print(big_spisok[x][y], end=" ")
 
 
-def won():
-    if clicks == 100-bombs:
-        if messagebox.askyesno("You win", "YOU WIN!!!\nTry again?"):
-            start_game()
-        else:
-            win.destroy()
+def endgame(victory = True):
+    global clicks
+    message = {True: "YOU WIN!!!", False : "YOU LOST!!!"}
+    if messagebox.askyesno("", f"{message[victory]}\nTry again?"):
+        clicks = 0
+        start_game()
+    else:
+        win.destroy()
 
+            
 def labels_destroy():
     for x in win.winfo_children():
         x.destroy()
@@ -68,17 +94,16 @@ def click(event):
         info_grid = clicked_label.grid_info()
         row = info_grid["row"] + 1
         column = info_grid["column"] + 1
-        # first_click(row = row,column = column)
+        if clicks == 0:
+            first_click(row = row,column = column)
         if big_spisok[row][column] == 1:
             clicked_label.config(bg="red", text="*")
-            if messagebox.askyesno("You win", "YOU LOST!!!\nTry again?"):
-                start_game()
-            else:
-                win.destroy()
+            endgame(victory = False)
         else:
             mines_around = 0
             clicks += 1
-            won()
+            if clicks == 100 - bombs:
+                endgame()
             clicked_label.config(bg="white")
             for row_shift in [-1, 0, 1]:
                 for col_shift in [-1, 0, 1]:
@@ -92,11 +117,7 @@ def first_click(row, column):
         for col_shift in [-1, 0, 1]:
             big_spisok[row + row_shift][column + col_shift] = 0
                 
-       
-
 start_game()
-
-
 win.mainloop()
 
 
