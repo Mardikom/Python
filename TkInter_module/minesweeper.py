@@ -1,29 +1,45 @@
 import tkinter as t
 from random import randint
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 
 win = t.Tk() 
 
+squares = 10
 menu = t.Menu()
 
 menubar = t.Menu(menu)
 
 menu.add_cascade(label="Options", menu = menubar)
 
-menubar.add_command(label="Change LVL", command = None)
+win.configure(background="white")
+
+win.title("MineSweeper")
+
+
+def change_lvl():
+    global combobox
+    win_level = t.Toplevel()
+    combobox = ttk.Combobox(win_level, values = ("Easy (10x10)", "Medium (15x15)", "Hard (20x20)"), state = 'readonly')
+    apply = ttk.Button(win_level, text="Apply", command=start_game)
+    combobox.current(0)
+    combobox.bind("<<ComboboxSelected>>", select_level)
+    combobox.pack()
+    apply.pack()
+    
+menubar.add_command(label="Change LVL", command = change_lvl)
 menubar.add_command(label="start again", command = None)
 menubar.add_command(label="Exit", command = None)
 
 win.configure(menu = menu)
-win.configure(background="white")
 
-win.title("MineSweeper")
-win.resizable(False, False)
+def select_level(event):
+    global squares
+    squares = 5 * combobox.current() + 10
 
 def graphic_field():
-    global label
-    for x in range(10):
-        for y in range(10):
+    global label, squares
+    for x in range(squares):
+        for y in range(squares):
             label = t.Label(width=6, height=3, bg="grey", relief= "ridge")
             label.bind("<Button-1>", click)
             label.bind("<Button-2>", add_flag)
@@ -36,32 +52,33 @@ def add_flag(event):
     if clicked_label["bg"] == "yellow":
         flags -= 1
         clicked_label.config(bg="grey")
-    elif clicked_label["bg"] == "grey" and flags < 25:
+    elif clicked_label["bg"] == "grey" and flags < bombs:
         flags += 1
         clicked_label.config(bg="yellow")
+    print("flags",flags)
         
 
 
-bombs = 0
+
 def digit_field():  
-    global big_spisok, bombs
+    global big_spisok, squares
     big_spisok = []
-    for x in range(0,12):
+    for x in range(0,squares+2):
         spisok = []
-        for x in range(0,12):
+        for x in range(0,squares+2):
             spisok.append(0)
         big_spisok.append(spisok)
 
 
-    for x in range(1,11):
-        for y in range(1,11):
+    for x in range(1,squares+1):
+        for y in range(1,squares+1):
             if randint(0,100) < 25:
                 big_spisok[x][y] = 1
 
 def print_digit_field():
-    for x in range(1,11):
-        for y in range(1,11):
-            if y == 10:
+    for x in range(1,squares+1):
+        for y in range(1,squares+1):
+            if y == squares:
                 print(big_spisok[x][y], end="\n")
             else:
                 print(big_spisok[x][y], end=" ")
@@ -82,15 +99,16 @@ def labels_destroy():
         x.destroy()
 
 def start_game():
-    labels_destroy
+    labels_destroy()
     digit_field()
     print_digit_field()
     graphic_field()
+    create_menu()
     
 clicks = 0
 
 def click(event):
-    global clicks
+    global clicks, bombs
     print(clicks)
     clicked_label = event.widget
     if clicked_label['bg'] == "grey":
@@ -99,13 +117,14 @@ def click(event):
         column = info_grid["column"] + 1
         if clicks == 0:
             first_click(row = row,column = column)
+            bombs = all_mines_count(big_spisok)
         if big_spisok[row][column] == 1:
             clicked_label.config(bg="red", text="*")
             endgame(victory = False)
         else:
             mines_around = 0
             clicks += 1
-            if clicks == 100 - bombs:
+            if clicks == squares*squares - bombs:
                 endgame()
             clicked_label.config(bg="white")
             for row_shift in [-1, 0, 1]:
@@ -114,14 +133,24 @@ def click(event):
                         mines_around += 1
             clicked_label.configure(text=mines_around)
     
+
+def all_mines_count(field):
+    count = 0
+    for x in field:
+        for y in x:
+            if y == 1:
+                count += 1
+    print(count)
+    return count
             
 def first_click(row, column):
     big_spisok[row][column] = 0
     for row_shift in [-1, 0, 1]:
         for col_shift in [-1, 0, 1]:
             big_spisok[row + row_shift][column + col_shift] = 0
-                
+    
 start_game()
 win.mainloop()
 
 
+# ДЗ: Создать функцию create menu
