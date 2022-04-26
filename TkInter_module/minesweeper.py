@@ -29,17 +29,20 @@ def graphic_field():
             label.bind("<Button-2>", add_flag)
             label.grid(row=x, column=y)
 
-    
+flags = 0
 def add_flag(event):
+    global flags
     clicked_label = event.widget
     if clicked_label["bg"] == "yellow":
+        flags -= 1
         clicked_label.config(bg="grey")
-    elif clicked_label["bg"] == "grey":
+    elif clicked_label["bg"] == "grey" and flags < 25:
+        flags += 1
         clicked_label.config(bg="yellow")
+        
 
 
 bombs = 0
-
 def digit_field():  
     global big_spisok, bombs
     big_spisok = []
@@ -110,6 +113,7 @@ def click(event):
                     if big_spisok[row + row_shift][column + col_shift] == 1:
                         mines_around += 1
             clicked_label.configure(text=mines_around)
+    
             
 def first_click(row, column):
     big_spisok[row][column] = 0
