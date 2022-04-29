@@ -5,32 +5,32 @@ from tkinter import messagebox, ttk
 win = t.Tk() 
 
 squares = 10
-menu = t.Menu()
-
-menubar = t.Menu(menu)
-
-menu.add_cascade(label="Options", menu = menubar)
 
 win.configure(background="white")
-
 win.title("MineSweeper")
 
+flags = 0
+clicks = 0
 
-def change_lvl():
-    global combobox
-    win_level = t.Toplevel()
-    combobox = ttk.Combobox(win_level, values = ("Easy (10x10)", "Medium (15x15)", "Hard (20x20)"), state = 'readonly')
-    apply = ttk.Button(win_level, text="Apply", command=start_game)
-    combobox.current(0)
-    combobox.bind("<<ComboboxSelected>>", select_level)
-    combobox.pack()
-    apply.pack()
-    
-menubar.add_command(label="Change LVL", command = change_lvl)
-menubar.add_command(label="start again", command = None)
-menubar.add_command(label="Exit", command = None)
-
-win.configure(menu = menu)
+def menubar():
+    def exit():
+        win.destroy()
+    def change_lvl():
+        global combobox
+        win_level = t.Toplevel()
+        combobox = ttk.Combobox(win_level, values = ("Easy (10x10)", "Medium (15x15)", "Hard (20x20)"), state = 'readonly')
+        apply = ttk.Button(win_level, text="Apply", command=start_game)
+        combobox.current(0)
+        combobox.bind("<<ComboboxSelected>>", select_level)
+        combobox.pack()
+        apply.pack()
+    menu = t.Menu()
+    menubar = t.Menu(menu)
+    menu.add_cascade(label="Options", menu = menubar)
+    menubar.add_command(label="Change LVL", command = change_lvl)
+    menubar.add_command(label="Start again", command = start_game)
+    menubar.add_command(label="Exit", command = exit)
+    win.configure(menu = menu)
 
 def select_level(event):
     global squares
@@ -45,7 +45,6 @@ def graphic_field():
             label.bind("<Button-2>", add_flag)
             label.grid(row=x, column=y)
 
-flags = 0
 def add_flag(event):
     global flags
     clicked_label = event.widget
@@ -57,9 +56,6 @@ def add_flag(event):
         clicked_label.config(bg="yellow")
     print("flags",flags)
         
-
-
-
 def digit_field():  
     global big_spisok, squares
     big_spisok = []
@@ -83,7 +79,6 @@ def print_digit_field():
             else:
                 print(big_spisok[x][y], end=" ")
 
-
 def endgame(victory = True):
     global clicks
     message = {True: "YOU WIN!!!", False : "YOU LOST!!!"}
@@ -92,7 +87,6 @@ def endgame(victory = True):
         start_game()
     else:
         win.destroy()
-
             
 def labels_destroy():
     for x in win.winfo_children():
@@ -103,9 +97,7 @@ def start_game():
     digit_field()
     print_digit_field()
     graphic_field()
-    create_menu()
-    
-clicks = 0
+    menubar()    
 
 def click(event):
     global clicks, bombs
@@ -132,7 +124,6 @@ def click(event):
                     if big_spisok[row + row_shift][column + col_shift] == 1:
                         mines_around += 1
             clicked_label.configure(text=mines_around)
-    
 
 def all_mines_count(field):
     count = 0
