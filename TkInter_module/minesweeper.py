@@ -1,9 +1,9 @@
 import tkinter as t
 from random import randint
 from tkinter import messagebox, ttk
-
+#-alpha, -fullscreen, -modified, -notify, -titlepath, -topmost, -transparent, or -type
 win = t.Tk() 
-
+win.attributes("-titlepath", '/Applications/Visual\ Studio\ Code.app/Contents/Resources/Code.icns')
 squares = 10
 
 win.configure(background="white")
@@ -13,8 +13,6 @@ flags = 0
 clicks = 0
 
 def menubar():
-    def exit():
-        win.destroy()
     def change_lvl():
         global combobox
         win_level = t.Toplevel()
@@ -29,7 +27,7 @@ def menubar():
     menu.add_cascade(label="Options", menu = menubar)
     menubar.add_command(label="Change LVL", command = change_lvl)
     menubar.add_command(label="Start again", command = start_game)
-    menubar.add_command(label="Exit", command = exit)
+    menubar.add_command(label="Exit", command = win.destroy)
     win.configure(menu = menu)
 
 def select_level(event):
@@ -40,7 +38,7 @@ def graphic_field():
     global label, squares
     for x in range(squares):
         for y in range(squares):
-            label = t.Label(width=6, height=3, bg="grey", relief= "ridge")
+            label = t.Label(width=4, height=2, bg="grey", relief= "ridge")
             label.bind("<Button-1>", click)
             label.bind("<Button-2>", add_flag)
             label.grid(row=x, column=y)
@@ -94,10 +92,10 @@ def labels_destroy():
 
 def start_game():
     labels_destroy()
+    menubar()    
     digit_field()
     print_digit_field()
     graphic_field()
-    menubar()    
 
 def click(event):
     global clicks, bombs

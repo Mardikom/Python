@@ -73,8 +73,6 @@ eraser = ttk.Button(text = "Ластик", command=erase)
 clean = ttk.Button(text = "Очистить", command = lambda : canvas.delete("all"))
 save = ttk.Button(text = "Сохранить", command=getter)
 
-
-
 canvas.grid(row=0, column=1, rowspan=4)
 choose_color_button.grid(row=0, column = 0, sticky="ns")
 eraser.grid(row=1, column = 0, sticky="ns")
