@@ -1,5 +1,5 @@
-from importlib.resources import path
-import psutil
+
+
 
 import psutil as pu
 
@@ -12,5 +12,7 @@ import psutil as pu
 
 print("\033[1;32;40mSwap memory:", pu.swap_memory()[0]/(1024*1024))# показывает сколько памяти в свапе
 print("Users:", pu.users()[0][0])# показывает пользователей
+for x in pu.disk_partitions():
+    print(x)
 print("Drive format: ", pu.disk_partitions()[0][2])# показывает инфу про накопитель
-print("SSD speed: ",  pu.disk_io_counters()[4]/1024) # показывает скорость скорость и количество записаных/прочитаных мб
+print("SSD speed: ",  pu.disk_io_counters()[4]/(1024*1024)) # показывает скорость скорость и количество записаных/прочитаных мб
