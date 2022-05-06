@@ -1,12 +1,11 @@
-from calendar import c
-from ipaddress import collapse_addresses
+
 import tkinter as t
 from tkinter import ttk
 import psutil as pu
 
 win = t.Tk()
 win.geometry("500x500")
-
+# cpu
 progressbars = []
 
 cpuInfoLabel = ttk.Label(text="CPU INFO:")
@@ -36,7 +35,21 @@ bars_interface()
 bars_config_cpu()
 print(progressbars)
 
+#ram
+ramInfoLabel = ttk.Label(text="RAM INFO:")
+ramInfoLabel.grid(row=10, column=0)
 
+ramTotalLabel = ttk.Label(text="TOTAL:")
+ramTotalLabel.grid(row=10, column=1, )
+
+
+#swap
+
+swapInfoLabel = ttk.Label(text="SWAP INFO:")
+swapInfoLabel.grid(row=12, column=0)
+
+swapTotalLabel = ttk.Label(text="TOTAL:")
+swapTotalLabel.grid(row=12, column=1, )
 
 
 win.mainloop()
