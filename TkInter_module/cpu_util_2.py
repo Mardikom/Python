@@ -2,11 +2,28 @@ import tkinter as t
 from tkinter import ttk
 import psutil as pu
 win = t.Tk()
-win.geometry("500x500")
+menu = t.Menu(win)
+win.geometry("350x300")
+win.config(menu = menu)
+win.title("CPU and RAM info")
+
+################################################################################
+# MENU
+
+mode_menu = t.Menu(menu)
+fixed_menu = t.Menu(menu)
+
+menu.add_cascade(label="Mode", menu=mode_menu)
+
+mode_menu.add_command(label="Hide", command = None)
+mode_menu.add_command(label="Not hide", command = None)
+mode_menu.add_command(label="Minimal", command = None)
+mode_menu.add_command(label="Fixed", command = None)
 
 
+################################################################################
 # SECTION 1
-
+'''
 frame1 = ttk.Frame(win)
 
 button_exit  = ttk.Button(frame1, text = "Exit")
@@ -19,7 +36,9 @@ buttonFixed = ttk.Button(frame1, text="Fixed")
 button_exit.grid(row=0,column=0, columnspan=2)
 box.grid(row=1, column=0) 
 buttonFixed.grid(row=1, column=1)
+'''
 
+################################################################################
 # SECTION 2
 
 frame2 = ttk.Frame(win)
@@ -51,7 +70,7 @@ bars_interface()
 bars_config_cpu()
 print(progressbars)
 
-
+################################################################################
 # SECTION 3
 
 frame3 = ttk.Frame(win)
@@ -83,15 +102,13 @@ def bar_config_ram():
     
 bar_config_ram()
 
-
-
-
-
+################################################################################
 # FRAMES CONFIGURATION
-frame1.grid(row=0, column=0, padx=15, pady=15,sticky='we')
+
+#frame1.grid(row=0, column=0, padx=15, pady=15,sticky='we')
 frame3.grid(row=2, column=0, padx=15,sticky='we')
 frame2.grid(row=1, column=0, padx=15,sticky='we')
-frame1.columnconfigure(0,minsize=270)
+#frame1.columnconfigure(0,minsize=270)
 frame2.columnconfigure(0,minsize=270)
 frame3.columnconfigure(0,minsize=270)
 
