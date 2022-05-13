@@ -23,8 +23,10 @@ def leave(event):
 
 label.bind("<Button-1>", click)
 label.bind("<Leave>",leave)
+label.bind("<Enter>",leave)
 
 
+label.bind_all("<Button-1>", click)
 # <Return>
 # <Button-1>
 # <Double-Button-1>

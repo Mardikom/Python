@@ -6,7 +6,29 @@ menu = t.Menu(win)
 win.geometry("350x300")
 win.config(menu = menu)
 win.title("CPU and RAM info")
+# print(win.bindtags())
+# MENU FUNCTIONS
 
+def hide():
+    win.bind_class('Tk',"<Enter>", show_win)
+    win.bind_class('Tk',"<Leave>", hide_win)
+
+def hide_win(event):
+    print(event,event.widget)
+    win.geometry("350x0")
+
+def show_win(event):
+    print(event,event.widget)
+    win.geometry("350x300")
+
+def fixWin():
+    if win.attributes("-alpha") == 1:
+        win.attributes("-alpha", 0.9)
+        win.attributes("-topmost", 1)
+    elif win.attributes("-alpha") != 1:
+        win.attributes("-alpha", 1)
+        win.attributes("-topmost", 0)
+        
 ################################################################################
 # MENU
 
@@ -15,10 +37,13 @@ fixed_menu = t.Menu(menu)
 
 menu.add_cascade(label="Mode", menu=mode_menu)
 
-mode_menu.add_command(label="Hide", command = None)
+mode_menu.add_command(label="Hide", command = hide)
 mode_menu.add_command(label="Not hide", command = None)
 mode_menu.add_command(label="Minimal", command = None)
-mode_menu.add_command(label="Fixed", command = None)
+mode_menu.add_command(label="Fixed", command = fixWin)
+
+
+
 
 
 ################################################################################
@@ -59,7 +84,6 @@ def bars_interface():
 
 def bars_config_cpu():
     cores = pu.cpu_percent(percpu=True)
-
     for index, core in enumerate(cores):
         progressbars[index].config(value = core)
         progressbarsLabels[index].config(text=f"{core}%")
@@ -92,7 +116,6 @@ usedMemoryLabel.grid(row = 13, column = 0,sticky='w')
 
 def bar_config_ram():
     memory = pu.virtual_memory()
-
     totalMemoryLabel.config(text=f"Total memory: {memory.total / (1024*1024)} MB")
     avaliableMemoryLabel.config(text=f"Avaliable memory: {round(memory.available / (1024*1024),1)} MB")
     usedMemoryLabel.config(text=f"Used memory: {round(memory.used / (1024*1024),1)} MB")
