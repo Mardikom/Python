@@ -2,12 +2,17 @@ import tkinter as t
 from tkinter import ttk
 import psutil as pu
 win = t.Tk()
-menu = t.Menu(win)
 win.geometry("350x300")
-win.config(menu = menu)
 win.title("CPU and RAM info")
 # print(win.bindtags())
+def start():
+    destroy_all()
+    set_menu()
+    section2_interface()
+    section3_interface()
+    cpu_ram_proccess()
 # MENU FUNCTIONS
+
 
 def hide():
     win.bind_class('Tk',"<Enter>", show_win)
@@ -28,111 +33,138 @@ def fixWin():
     elif win.attributes("-alpha") != 1:
         win.attributes("-alpha", 1)
         win.attributes("-topmost", 0)
-        
+
+
+################################################################################
+# DESTROY ALL FUNCTION
+def destroy_all():
+    for x in win.winfo_children():
+        x.destroy()
+    
 ################################################################################
 # MENU
 
-mode_menu = t.Menu(menu)
-fixed_menu = t.Menu(menu)
+def set_menu():
+    menu = t.Menu(win)
+    mode_menu = t.Menu(menu,tearoff=0)
 
-menu.add_cascade(label="Mode", menu=mode_menu)
+    menu.add_cascade(label="Mode", menu=mode_menu)
 
-mode_menu.add_command(label="Hide", command = hide)
-mode_menu.add_command(label="Not hide", command = None)
-mode_menu.add_command(label="Minimal", command = None)
-mode_menu.add_command(label="Fixed", command = fixWin)
+    menu.add_command(label= 'Fixed', command=None)
 
+    mode_menu.add_command(label="Hide", command = hide)
+    mode_menu.add_command(label="Not hide", command = None)
+    mode_menu.add_command(label="Minimal", command = set_minimal_win)
 
-
-
-
-################################################################################
-# SECTION 1
-'''
-frame1 = ttk.Frame(win)
-
-button_exit  = ttk.Button(frame1, text = "Exit")
-box = ttk.Combobox(frame1,values=["Hide", "Not hide", "Minimal"], state='readonly')
-box.current(1)
-
-buttonFixed = ttk.Button(frame1, text="Fixed")
+    win.config(menu = menu)
 
 
-button_exit.grid(row=0,column=0, columnspan=2)
-box.grid(row=1, column=0) 
-buttonFixed.grid(row=1, column=1)
-'''
 
 ################################################################################
 # SECTION 2
 
-frame2 = ttk.Frame(win)
-win.columnconfigure(0,minsize=270)
 
-cpuInfoLabel = ttk.Label(frame2, text="CPU INFO:")
-cpuInfoLabel.grid(row=0, column=0)
+def section2_interface():
+    global progressbars, progressbarsLabels
+    frame2 = ttk.Frame(win)
+    win.columnconfigure(0,minsize=270)
 
-progressbars = []
-progressbarsLabels = []
-def bars_interface():
-    for x in range(8):
+    cpuInfoLabel = ttk.Label(frame2, text="CPU INFO:")
+    cpuInfoLabel.grid(row=0, column=0)
+
+    progressbars = []
+    progressbarsLabels = []
+
+    for x in range(pu.cpu_count(logical=True)):
         progressbars.append(ttk.Progressbar(frame2, value = 45, length=5))
         progressbarsLabels.append(ttk.Label(frame2))
     for index, bar in enumerate(progressbars):
         bar.grid(row = index+1, column = 0, stick = 'we')
         progressbarsLabels[index].grid(row = index+1, column = 1, padx = 12)
+    frame2.grid(row=1, column=0, padx=15,sticky='we')
+    frame2.columnconfigure(0,minsize=270)
 
-def bars_config_cpu():
+
+
+
+
+
+################################################################################
+# SECTION 3
+def section3_interface():
+    global ramProgressbar, totalMemoryLabel, avaliableMemoryLabel, usedMemoryLabel, memoryLabel
+    frame3 = ttk.Frame(win)
+    win.columnconfigure(1,minsize=270)
+
+    ramInfoLabel = ttk.Label(frame3, text="RAM INFO:")
+    ramProgressbar = ttk.Progressbar(frame3, value = 45, length=5)
+    memoryLabel = ttk.Label(frame3)
+    totalMemoryLabel = ttk.Label(frame3)
+    avaliableMemoryLabel = ttk.Label(frame3)
+    usedMemoryLabel = ttk.Label(frame3)
+
+    ramInfoLabel.grid(row=0, column=0)
+    ramProgressbar.grid(row = 1, column = 0, stick = 'we')
+    memoryLabel.grid(row = 1, column = 1, padx = 12)
+    totalMemoryLabel.grid(row = 2, column = 0)
+    avaliableMemoryLabel.grid(row = 4, column = 0)
+    usedMemoryLabel.grid(row = 3, column = 0)
+    frame3.grid(row=2, column=0, padx=15,sticky='we')
+    frame3.columnconfigure(0,minsize=270)
+   
+
+
+################################################################################
+# Recursion function
+
+def cpu_ram_proccess():
+    global recursion
+    memory = pu.virtual_memory()
     cores = pu.cpu_percent(percpu=True)
     for index, core in enumerate(cores):
         progressbars[index].config(value = core)
         progressbarsLabels[index].config(text=f"{core}%")
-    win.after(1000, bars_config_cpu)
-
-
-bars_interface()
-bars_config_cpu()
-print(progressbars)
-
-################################################################################
-# SECTION 3
-
-frame3 = ttk.Frame(win)
-
-ramInfoLabel = ttk.Label(frame3, text="RAM INFO:")
-ramProgressbar = ttk.Progressbar(frame3, value = 45)
-memoryLabel = ttk.Label(frame3)
-totalMemoryLabel = ttk.Label(frame3)
-avaliableMemoryLabel = ttk.Label(frame3)
-usedMemoryLabel = ttk.Label(frame3)
-
-ramInfoLabel.grid(row=9, column=0)
-ramProgressbar.grid(row = 10, column = 0, stick = 'we')
-memoryLabel.grid(row = 10, column = 1, padx = 12)
-totalMemoryLabel.grid(row = 11, column = 0,sticky='w')
-avaliableMemoryLabel.grid(row = 12, column = 0,sticky='w')
-usedMemoryLabel.grid(row = 13, column = 0,sticky='w')
-
-
-def bar_config_ram():
-    memory = pu.virtual_memory()
     totalMemoryLabel.config(text=f"Total memory: {memory.total / (1024*1024)} MB")
     avaliableMemoryLabel.config(text=f"Avaliable memory: {round(memory.available / (1024*1024),1)} MB")
     usedMemoryLabel.config(text=f"Used memory: {round(memory.used / (1024*1024),1)} MB")
     ramProgressbar.config(value = memory.percent)
     memoryLabel.config(text=f"{memory.percent}%")
-    win.after(1000, bar_config_ram)
+    recursion = win.after(1000, cpu_ram_proccess)
     
-bar_config_ram()
 
 ################################################################################
-# FRAMES CONFIGURATION
+# MINIMAL WIN
+def set_minimal_win():
+    win.after_cancel(recursion)
+    destroy_all()
+    win.geometry("540x55")
+    set_menuMinimal()
+    ramInfoLabel = ttk.Label(text="RAM INFO:")
+    ramInfoLabel.grid(row=0, column=0)
+    ramProgressbar = ttk.Progressbar(value = 45, length=5)
+    ramProgressbar.grid(row = 1, column = 0, stick = 'we')
+    cpuInfoLabel = ttk.Label(text="CPU INFO:")
+    cpuInfoLabel.grid(row=0, column=1)
+    cpuProgressbar = ttk.Progressbar(value = 45, length=5)
+    cpuProgressbar.grid(row = 1, column = 1, stick = 'we')
 
-#frame1.grid(row=0, column=0, padx=15, pady=15,sticky='we')
-frame3.grid(row=2, column=0, padx=15,sticky='we')
-frame2.grid(row=1, column=0, padx=15,sticky='we')
-#frame1.columnconfigure(0,minsize=270)
-frame2.columnconfigure(0,minsize=270)
-frame3.columnconfigure(0,minsize=270)
+def set_menuMinimal():
+    menuMinimal = t.Menu(win)
+    
+    menuMinimal.add_command(label= 'Main Win', command=None)
+    menuMinimal.add_command(label= 'Fixed', command=None)
 
+    win.config(menu = menuMinimal)
+
+
+# def ram_proccess():
+#     memory = pu.virtual_memory()
+#     ramProgressbar.config(value = memory.percent)
+#     memoryLabel.config(text=f"{memory.percent}%")
+#     recursion = win.after(1000, ram_proccess)
+
+
+
+
+start()
 win.mainloop()
