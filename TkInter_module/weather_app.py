@@ -24,7 +24,7 @@ def get_weather():
     image = Image.open(BytesIO(get_image))
     image2= ImageTk.PhotoImage(image)
 
-    imageLabel.config(image=image2)
+    imageLabel.config(image=image2,)
     temp.config(text=f'Temperature: {data["main"]["temp"]}°C')
     feelsLike.config(text=f'Feels like: {data["main"]["feels_like"]}°C')
     sky.config(text=f'Weather: {data["weather"][0]["main"]}')
