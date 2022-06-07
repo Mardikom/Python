@@ -4,11 +4,13 @@ from tkinter import ttk
 import requests
 from PIL import Image, ImageTk
 from io import BytesIO
+import base64
 
 win = t.Tk() 
 win.geometry("512x512+800+50")
 win.title("WeatherAPP")
 win.resizable(width=False, height=False)
+
 
 def get_weather():
     global data, image2
@@ -19,11 +21,11 @@ def get_weather():
     city = searchEntry.get()
     data = requests.get(f'https://api.openweathermap.org/data/2.5/weather?q={city}&units=metric&appid=1396c8d2a12422b51114f17c1e04512a').json()
     
-    get_image = requests.get(f'https://openweathermap.org/img/wn/{data["weather"][0]["icon"]}@2x.png').content
-    image = Image.open(BytesIO(get_image))
-    image2= ImageTk.PhotoImage(image)
-
+    get_image = requests.get(f'https://openweathermap.org/img/wn/{data["weather"][0]["icon"]}@2x.png', stream=True)
+    image = base64.encodebytes(get_image.raw.read())
+    image2= t.PhotoImage(data=image)
     imageLabel.config(image=image2)
+
     temp.config(text=f'Temperature: {data["main"]["temp"]}°C')
     feelsLike.config(text=f'Feels like: {data["main"]["feels_like"]}°C')
     sky.config(text=f'Weather: {data["weather"][0]["main"]}')
@@ -55,5 +57,3 @@ frame.pack()
 frame2.pack()
 
 win.mainloop()
-
-
