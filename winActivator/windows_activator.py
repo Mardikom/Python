@@ -1,7 +1,7 @@
 import tkinter as t
 from tkinter import Frame, ttk
 from tkinter import messagebox as mb
-import subprocess
+import activation_script as act
 
 win = t.Tk() 
 win.title("Windows Activator")
@@ -26,13 +26,13 @@ win10LtscButton.pack()
 win10LtscButton.config(width=17)
 #Functions
 def win8():
-    pass
+    act.win8activate()
 def win81():
-    pass
+    act.win81activate()
 def win10Pro():
-    pass
+    act.win10ProActivate()
 def win10Ltsc():
-    pass
+    act.win10ltscActivate()
 
 
 
